@@ -23,10 +23,10 @@ set encoding=utf-8 "设置编码
 set fileencoding=gb18030
 set fileencodings=utf-8,gb18030,utf-16,big5
 "更改缩进
-set expandtab
-set tabstop=2
+set noexpandtab "不要把tab变成空格
+set tabstop=2 "tab显示为2格
 set shiftwidth=2
-set softtabstop=2
+set softtabstop=2 "tab退格
 set scrolloff=10 "编辑行位置
 set tw=0
 set indentexpr=
@@ -58,9 +58,9 @@ call plug#begin()
 Plug 'connorholyday/vim-snazzy'
 Plug 'preservim/nerdtree'
 Plug 'dense-analysis/ale'
-Plug 'preservim/tagbar'
-Plug 'mbbill/undotree'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'liuchengxu/vista.vim'
+Plug 'jiangmiao/auto-pairs'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 Plug 'dhruvasagar/vim-table-mode', { 'on': 'TableModeToggle' }
 
@@ -106,7 +106,25 @@ autocmd Filetype markdown inoremap <buffer> ;l --------<Enter>
 autocmd Filetype markdown exec "TableModeToggle"
 let g:table_mode_corner='|'
 
+"mytry with gofmt
+autocmd BufWritePost *.go silent exec "!gofmt -w %"
+autocmd BufWritePost *.cpp,*.cc,*.h,*.hpp,*.hh silent exec "!clang-format -style=file -i %"
+"设置自动读入，不确定是否安全
+set autoread
 
+"Taglist(vista)配置
+noremap <c-b> :Vista!!<CR>
+let g:vista_default_executive = 'coc'
+let g:vista_sidebar_width = 20
+
+" coc 配置
+" 回车可以确定补全项
+" ctrl+g撤销当前的撤销 .
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+" 设置颜色
+hi CocMenuSel ctermbg=237 guibg=#13354A
 
 " Compile function
 noremap r :call CompileRunGcc()<CR>
@@ -132,20 +150,3 @@ func! CompileRunGcc()
 		:term export DEBUG="INFO,ERROR,WARNING"; node --trace-warnings .
 	endif
 endfunc
-
-
-
-
-"括号补全
-
-
-
-
-
-
-
-
-
-
-
-
